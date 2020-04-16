@@ -27,7 +27,6 @@ RSpec.describe "Api::V1::TasksController", type: :request do
     end
 
     it "returns correct number of tasks" do
-      binding.pry
       expect(response_json.count).to eq 2
     end
 

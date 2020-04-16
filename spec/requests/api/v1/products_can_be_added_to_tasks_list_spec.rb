@@ -4,6 +4,7 @@ RSpec.describe "Api::V1::TasksController", type: :request do
   let!(:product_1) {create(:product, name: "pasta", price: 20)}
   let!(:product_2) {create(:product, name: "eggs", price: 30)}
   let!(:product_3) {create(:product, name: "tomatoes", price: 10)}
+  
   let(:user) { create(:user) }
   let(:user_credentials) { user.create_new_auth_token }
   let(:user_headers) { { HTTP_ACCEPT: "application/json" }.merge!(user_credentials) }

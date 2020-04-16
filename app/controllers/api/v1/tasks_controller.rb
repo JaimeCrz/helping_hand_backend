@@ -1,5 +1,6 @@
 class Api::V1::TasksController < ApplicationController
   before_action :authenticate_user!, only: %i[create update]
+  before_action :check_user_owns_task, only: %i[create]
   rescue_from ActiveRecord::RecordNotFound, with: :render_active_record_error
 
   def index
@@ -8,9 +9,9 @@ class Api::V1::TasksController < ApplicationController
   end
 
   def create
-    task = Task.create(user_id: params[:user_id]) 
-    task.task_items.create(product_id: params[:product_id])
-    render json: create_json_response(task)
+      task = Task.create(user_id: params[:user_id]) 
+      task.task_items.create(product_id: params[:product_id])
+      render json: create_json_response(task)  
   end
 
   def update
@@ -30,6 +31,16 @@ class Api::V1::TasksController < ApplicationController
   end
 
   private
+
+  def check_user_owns_task
+    previous_accepted_task = Task.where(confirmed: 'true')
+    previous_accepted_task.each do |task|
+      if task.user_id == current_user.id
+        render json: { error: 'You already an active task, please remove it or update it.' }, status: 403
+        return
+      end
+    end
+  end
 
   def render_error_message(task)
     case 
